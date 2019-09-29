@@ -22,8 +22,8 @@ class L3Attack(torch.autograd.Function):
 
 class L4Attack(torch.autograd.Function):
     @staticmethod
-    def forward(self, model, img, datast, allstep, sink_lr, s_radius):
-        return L4_function(model, img, datast=datast, allstep=allstep, lr=sink_lr, s_radius=s_radius)
+    def forward(self, model, img, datast, allstep, sink_lr, u_radius):
+        return L4_function(model, img, datast=datast, allstep=allstep, lr=sink_lr, u_radius=u_radius)
 
     @staticmethod
     def backward(self, grad_output):
@@ -331,8 +331,9 @@ for i in range(args.lowbd, args.upbd):
     predicted_label = model(transform(view_data.clone(), datast=args.datast)).data.max(1, keepdim=True)[1][0]
     if predicted_label != view_data_label:
         continue#note that only load images that were classified correctly
-    torch.save(view_data_label, adv_d + '/real_label/' + args.datast + '_' + str(numcout) + t + '_label.pt')
+#     torch.save(view_data_label, adv_d + '/real_label/' + args.datast + '_' + str(numcout) + t + '_label.pt')
     torch.save(PGD(model, view_data, datast=args.datast, allstep=args.allstep, radius=args.radius, setting=args.setting, noise_radius=args.noise_radius, targeted_lr = args.targeted_lr, targeted_radius = args.targeted_radius, untargeted_lr = args.untargeted_lr, untargeted_radius = args.untargeted_radius), adv_d + '/aug_pgd/' + args.datast + '_' + str(numcout) + t + '.pt')
     torch.save(CW(model, view_data, datast=args.datast, allstep=args.allstep, radius=args.radius,  setting=args.setting, noise_radius=args.noise_radius, targeted_lr = args.targeted_lr, targeted_radius = args.targeted_radius, untargeted_lr = args.untargeted_lr, untargeted_radius = args.untargeted_radius), adv_d + '/cw/' + args.datast + '_' + str(numcout) + t + '.pt')
     numcout += 1
 print('Finish generating white box adversaries')
+
