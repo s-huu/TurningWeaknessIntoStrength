@@ -1,19 +1,22 @@
-# A New Defense Against Adversarial Images: Turning a Weakness into a Strength
+## A New Defense Against Adversarial Images: Turning a Weakness into a Strength
+<img align="right" src="detect_fig.png" width="300px" />
+#### Authors:
+* [Tao Yu](http://www.cs.cornell.edu/~tyu/)*
+* Shengyuan Hu*
+* [Chuan Guo](https://sites.google.com/view/chuanguo)
+* [Weilun Chao](http://www-scf.usc.edu/~weilunc/)
+* [Kilian Q. Weinberger](http://kilian.cs.cornell.edu/index.html)
 
-Code and models for the paper A New Defense Against Adversarial Images: Turning a Weakness into a Strength, NeurIPS2019.
-
-## Introduction
-
-<div align="right">
-  <img src="detect_fig.png" style='float:right; width:100px;'/>
-</div>
-
-by..
+*: Equal Contribution
 
 
-## Citation
+### Introduction
+This repo contains official code and models for the NeurIPS 2019 paper, A New Defense Against Adversarial Images: Turning a Weakness into a Strength.
 
-If you use our code, models or wish to refer to our results, please use the following BibTex entry:
+A table about experimental results on cifar and imagenet.
+
+### Citation
+If you use our code or wish to refer to our results, please use the following BibTex entry:
 ```
 @InProceedings{Yu_2019_NIPS,
   author = {Tao Yu, Shengyuan Hu, Chuan Guo, Weilun Chao and Kilian Q. Weinberger},
