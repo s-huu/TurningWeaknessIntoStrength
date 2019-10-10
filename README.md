@@ -1,5 +1,6 @@
 ## A New Defense Against Adversarial Images: Turning a Weakness into a Strength
 <img align="right" src="detect_fig.png" width="300px" />
+
 #### Authors:
 * [Tao Yu](http://www.cs.cornell.edu/~tyu/)*
 * Shengyuan Hu*
