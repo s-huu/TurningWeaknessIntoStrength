@@ -2,7 +2,7 @@
 <img align="right" src="detect_fig.png" width="300px" />
 #### Authors:
 * [Tao Yu](http://www.cs.cornell.edu/~tyu/)*
-* Shengyuan Hu*
+* [Shengyuan Hu]() *
 * [Chuan Guo](https://sites.google.com/view/chuanguo)
 * [Weilun Chao](http://www-scf.usc.edu/~weilunc/)
 * [Kilian Q. Weinberger](http://kilian.cs.cornell.edu/index.html)
