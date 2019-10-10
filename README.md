@@ -4,8 +4,8 @@ Code and models for the paper A New Defense Against Adversarial Images: Turning 
 
 ## Introduction
 
-<div align="center">
-  <img src="detect_fig.png" style='float:right; width:300px;'/>
+<div align="right">
+  <img src="detect_fig.png" style='float:right; width:100px;'/>
 </div>
 
 by..
