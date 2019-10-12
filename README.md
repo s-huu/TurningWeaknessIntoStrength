@@ -13,16 +13,21 @@
 ### Introduction
 This repo contains official code and models for the NeurIPS 2019 paper, A New Defense Against Adversarial Images: Turning a Weakness into a Strength.
 
+We postulate that if an image has been tampered with adversarial perturbation, then surrouding adversarial directions either become harder to find with gradient methods or have substantially higher density than for natural images. Based on this, we develop a practical test for this signature characteristic to successfully detect both gray-box and white-box adversarial attacks.
+
 A table about experimental results on cifar and imagenet.
 
 ### Dependencies
-Our implementation works with PyTorch>=1.0.0 Install other dependencies: `$ pip install -r requirement.txt`
+* Python 3
+* PyTorch >= 1.0.0
+* numpy
 
 ### Data
-How to get cifar and imagenet data
+For CIFAR10 dataset, as specified in attack.py, download it by torchvision.datasets.CIFAR10() function. For ImageNet data,
+download with imagenet_download.sh.
 
 ### Usage
-Introduction of different files
+Introduction of different files,
 ```
 $ python train_vgg19.py # train vgg19 model on cifar
 $ python attack.py # attack to generate adversaries
@@ -33,9 +38,9 @@ $ python evaluate.py # detect and evaluate
 If you use our code or wish to refer to our results, please use the following BibTex entry:
 ```
 @InProceedings{Yu_2019_NIPS,
-  author = {Tao Yu, Shengyuan Hu, Chuan Guo, Weilun Chao and Kilian Q. Weinberger},
+  author = {Yu, Tao and Hu, Shengyuan and Guo, Chuan and Chao, Weilun and Weinberger, Kilian},
   title = {A New Defense Against Adversarial Images: Turning a Weakness into a Strength},
-  booktitle = {The 33rd Conference on Neural Information Processing Systems (NeurIPS 2019)},
+  booktitle = {Proceedings of the 33rd Conference on Neural Information Processing Systems (NeurIPS 2019)},
   month = {Oct.},
   year = {2019}
 }

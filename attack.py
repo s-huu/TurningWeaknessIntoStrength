@@ -285,6 +285,11 @@ if args.datast == 'imagenet':
     args.targeted_lr = 0.005
     args.targeted_radius = 0.03
     args.untargeted_radius = 0.03
+    #### use ImageFolder to load images, need to map label correct with target_transform
+    # testset = torchvision.datasets.ImageFolder(root=args.real_dir,
+    #     transform=torchvision.transforms.Compose([torchvision.transforms.ToTensor(),]),
+    #                                            target_transform=None
+    # )
     if args.base == 'resnet':
         model = models.resnet101(pretrained=True)
         args.untargeted_lr = 0.1
