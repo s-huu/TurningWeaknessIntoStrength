@@ -8,7 +8,7 @@ import numpy as np
 import argparse
 from train_vgg19 import vgg19
 from utils import Noisy,transform,random_label 
-
+import os
 
 class L3Attack(torch.autograd.Function):
     @staticmethod
@@ -272,8 +272,6 @@ parser.add_argument('--allstep', type=int, default=50)
 parser.add_argument('--lowbd', type=int, default=0)
 parser.add_argument('--upbd', type=int, default=1000)#how many adversaries will be generated
 parser.add_argument('--radius', type=float, default=0.1)#how many adversaries will be generated
-parser.add_argument('--real_dir', type=str, default='/home/')#this is the folder for real images in ImageNet in .pt format
-parser.add_argument('--adv_dir', type=str, default='/home/')#this is the folder to store generate adversaries of ImageNet in .pt format
 args = parser.parse_args()
 
 t_attack = L3Attack.apply
@@ -281,15 +279,24 @@ u_attack = L4Attack.apply
 noisy = Noisy.apply
 
 if args.datast == 'imagenet':
+    args.real_dir = '~/imagenetdata/'
+    args.adv_dir = '~/imagenetadv/'
+    args.real_dir_for_eval = '~/imagenet_real_eval/'
+    if not os.path.exists(args.adv_dir):
+        os.makedirs(args.adv_dir)
+    if not os.path.exists(args.real_dir_for_eval):
+        os.makedirs(args.real_dir_for_eval)
     args.noise_radius = 0.1
     args.targeted_lr = 0.005
     args.targeted_radius = 0.03
     args.untargeted_radius = 0.03
     #### use ImageFolder to load images, need to map label correct with target_transform
-    # testset = torchvision.datasets.ImageFolder(root=args.real_dir,
-    #     transform=torchvision.transforms.Compose([torchvision.transforms.ToTensor(),]),
-    #                                            target_transform=None
-    # )
+    testset = torchvision.datasets.ImageFolder(root=args.real_dir,
+        transform=torchvision.transforms.Compose([
+            torchvision.transforms.Resize(256),
+            torchvision.transforms.CenterCrop(224),
+            torchvision.transforms.ToTensor(),]),
+                                               )
     if args.base == 'resnet':
         model = models.resnet101(pretrained=True)
         args.untargeted_lr = 0.1
@@ -300,6 +307,13 @@ if args.datast == 'imagenet':
         raise Exception('No such model predefined.')
     model = torch.nn.DataParallel(model).cuda()
 elif args.datast == 'cifar':
+    args.real_dir = '~/cifardata/'
+    args.adv_dir = '~/cifaradv/'
+    args.real_dir_for_eval = '~/cifar_real_eval/'
+    if not os.path.exists(args.adv_dir):
+        os.makedirs(args.adv_dir)
+    if not os.path.exists(args.real_dir_for_eval):
+        os.makedirs(args.real_dir_for_eval)
     args.noise_radius = 0.01
     args.targeted_lr = 0.0005
     args.targeted_radius = 0.5
@@ -308,11 +322,12 @@ elif args.datast == 'cifar':
     testset = torchvision.datasets.CIFAR10(root=args.real_dir, train=False, download=True,
                                            transform=torchvision.transforms.Compose(
                                                [torchvision.transforms.ToTensor(), ]))
+
     if args.base == "vgg":
         model = vgg19()
         model.features = torch.nn.DataParallel(model.features)
         model.cuda()
-        checkpoint = torch.load(save_dir + '/model_best.pth.tar')#save directory for vgg19 model
+        checkpoint = torch.load('~/vgg19model/model_best.pth.tar')#save directory for vgg19 model
     else:
         raise Exception('No such model predefined.')
     model.load_state_dict(checkpoint['state_dict'])
@@ -325,20 +340,24 @@ adv_d = args.adv_dir + args.base
 t = "_adv0p1_" + str(args.allstep)
 numcout = 0
 for i in range(args.lowbd, args.upbd):
-    if args.datast == 'imagenet':
-        view_data = torch.load(args.real_dir + 'real_img/real_' + str(i) + '_img.pt')#load the real images
-        view_data_label = torch.load(args.real_dir + 'real_label/real_' + str(i) + '_label.pt')  # real label of this image
-    else:
-        view_data, view_data_label = testset[i]
-        view_data = view_data.unsqueeze(0).cuda()
-        view_data_label = view_data_label * torch.ones(1).cuda().long()
+    view_data, view_data_label = testset[i]
+    view_data = view_data.unsqueeze(0).cuda()
+    view_data_label = view_data_label * torch.ones(1).cuda().long()
     model.eval()
     predicted_label = model(transform(view_data.clone(), datast=args.datast)).data.max(1, keepdim=True)[1][0]
     if predicted_label != view_data_label:
         continue#note that only load images that were classified correctly
-#     torch.save(view_data_label, adv_d + '/real_label/' + args.datast + '_' + str(numcout) + t + '_label.pt')
-    torch.save(PGD(model, view_data, datast=args.datast, allstep=args.allstep, radius=args.radius, setting=args.setting, noise_radius=args.noise_radius, targeted_lr = args.targeted_lr, targeted_radius = args.targeted_radius, untargeted_lr = args.untargeted_lr, untargeted_radius = args.untargeted_radius), adv_d + '/aug_pgd/' + args.datast + '_' + str(numcout) + t + '.pt')
-    torch.save(CW(model, view_data, datast=args.datast, allstep=args.allstep, radius=args.radius,  setting=args.setting, noise_radius=args.noise_radius, targeted_lr = args.targeted_lr, targeted_radius = args.targeted_radius, untargeted_lr = args.untargeted_lr, untargeted_radius = args.untargeted_radius), adv_d + '/cw/' + args.datast + '_' + str(numcout) + t + '.pt')
+    torch.save(view_data, args.real_dir_for_eval + args.base + '/' + str(numcout) + t + '_img.pt')
+    torch.save(view_data_label, args.real_dir_for_eval + args.base + '/' + str(numcout) + t + '_label.pt')
+    torch.save(PGD(model, view_data, datast=args.datast, allstep=args.allstep, radius=args.radius,
+                   setting=args.setting, noise_radius=args.noise_radius, targeted_lr = args.targeted_lr,
+                   targeted_radius = args.targeted_radius, untargeted_lr = args.untargeted_lr,
+                   untargeted_radius = args.untargeted_radius),
+               adv_d + '/aug_pgd/' + args.datast + '_' + str(numcout) + t + '.pt')
+    torch.save(CW(model, view_data, datast=args.datast, allstep=args.allstep, radius=args.radius,
+                  setting=args.setting, noise_radius=args.noise_radius, targeted_lr = args.targeted_lr,
+                  targeted_radius = args.targeted_radius, untargeted_lr = args.untargeted_lr,
+                  untargeted_radius = args.untargeted_radius),
+               adv_d + '/cw/' + args.datast + '_' + str(numcout) + t + '.pt')
     numcout += 1
 print('Finish generating white box adversaries')
-

@@ -23,8 +23,10 @@ A table about experimental results on cifar and imagenet.
 * numpy
 
 ### Data
-For CIFAR10 dataset, as specified in attack.py, download it by torchvision.datasets.CIFAR10() function. For ImageNet data,
-download with imagenet_download.sh.
+- For CIFAR10 dataset, it is downloaded automatically by torchvision.datasets.CIFAR10() function in For CIFAR10 dataset, it is downloaded automatically by torchvision.datasets.CIFAR10() function in .train_vgg19.py For ImageNet data,
+.
+- For ImageNet dataset, download the validation images to a folder '~/imagenetdata/', then move them into labeled subfolders with
+imagenet.sh.
 
 ### Usage
 Introduction of different files,

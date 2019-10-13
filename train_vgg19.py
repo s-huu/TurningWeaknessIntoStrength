@@ -89,8 +89,8 @@ parser.add_argument('--cpu', dest='cpu', action='store_true',
                     help='use cpu')
 parser.add_argument('--save-dir', dest='save_dir',
                     help='The directory used to save the trained models',
-                    default='save_temp', type=str)
-parser.add_argument('--real_dir', type=str, default='/home/')#this is the folder for real images
+                    default='~/vgg19model/', type=str)
+parser.add_argument('--real_dir', type=str, default='~/cifardata/')#this is the folder for real images
 
 best_prec1 = 0
 
@@ -102,6 +102,9 @@ def main():
     # Check the save_dir exists or not
     if not os.path.exists(args.save_dir):
         os.makedirs(args.save_dir)
+
+    if not os.path.exists(args.real_dir):
+        os.makedirs(args.real_dir)
 
     model = vgg19()
 
