@@ -91,42 +91,42 @@ def combined_metric_fpr_tpr(fpr,
 
 
 parser = argparse.ArgumentParser(description='PyTorch White Box Adversary Detection')
+parser.add_argument('--real_dir', type=str, required=True, help='the folder for real images in ImageNet in .pt format')
+parser.add_argument('--adv_dir', type=str, required=True, help='the folder to store generate adversaries of ImageNet in .pt')
+parser.add_argument('--title', type=str, required=True, help='name/title of your attack')
 parser.add_argument('--datast', type=str, default='imagenet', help='dataset, imagenet or cifar')
-parser.add_argument('--base', type=str, default="resnet")
-parser.add_argument('--allstep', type=int, default=50)
-parser.add_argument('--lowbd', type=int, default=0)
-parser.add_argument('--upbd', type=int, default=1000)#how many adversaries will be evaluated
-parser.add_argument('--fpr', type=float, default=0.1)
-parser.add_argument('--real_dir', type=str, default='/home/')#this is the folder for real images in ImageNet in .pt format
-parser.add_argument('--adv_dir', type=str, default='/home/')#this is the folder to store generate adversaries of ImageNet in .pt
+parser.add_argument('--base', type=str, default="resnet", help='model, vgg for cifar and resnet/inceptiion for imagenet')
+parser.add_argument('--lowbd', type=int, default=0, help='index of the first adversarial example to load')
+parser.add_argument('--upbd', type=int, default=1000, help='index of the last adversarial example to load')
+parser.add_argument('--fpr', type=float, default=0.1, help='false positive rate for detection')
 parser.add_argument('--det_opt', type=str, default='combined',help='l1,targeted, untargeted or combined')
 args = parser.parse_args()
 
 model = None
 if args.datast == 'imagenet':
-    args.noise_radius = 0.1
-    args.targeted_lr = 0.005
-    args.targeted_radius = 0.03
-    args.untargeted_radius = 0.03
+    noise_radius = 0.1
+    targeted_lr = 0.005
+    targeted_radius = 0.03
+    untargeted_radius = 0.03
     if args.base == 'resnet':
         model = models.resnet101(pretrained=True)
         """Criterions on ResNet-101"""
         criterions = {0.1: (1.90,35,1000), 0.2: (1.77, 22, 1000)}
-        args.untargeted_lr = 0.1
+        untargeted_lr = 0.1
     elif args.base == 'inception':
         model = models.inception_v3(pretrained=True, transform_input=False)
         """Criterions on Inception"""
         criterions = {0.1: (1.95, 57, 1000), 0.2: (1.83, 26, 1000)}
-        args.untargeted_lr = 3
+        untargeted_lr = 3
     else:
         raise Exception('No such model predefined.')
     model = torch.nn.DataParallel(model).cuda()
 elif args.datast == 'cifar':#need to update parameters in detection like noise_radius, also update criterions
-    args.noise_radius = 0.01
-    args.targeted_lr = 0.0005
-    args.targeted_radius = 0.5
-    args.untargeted_radius = 0.5
-    args.untargeted_lr = 1
+    noise_radius = 0.01
+    targeted_lr = 0.0005
+    targeted_radius = 0.5
+    untargeted_radius = 0.5
+    untargeted_lr = 1
     if args.base == "vgg":
         model = vgg19()
         model.features = torch.nn.DataParallel(model.features)
@@ -142,13 +142,39 @@ else:
 
 model.eval()
 adv_d = args.adv_dir + args.base + '/'
-t = "_adv0p1_" + str(args.allstep)
-atks = ["aug_pgd", "cw"]
+attacks = ["aug_pgd", "cw"]
 if args.det_opt == 'combined':
-    combined_metric_fpr_tpr(args.fpr, criterions, model, args.datast, t, atks, args.lowbd, args.upbd, args.real_dir, adv_d, 
-                                args.noise_radius, args.targeted_lr, args.targeted_radius, args.untargeted_lr, args.untargeted_radius)
+    combined_metric_fpr_tpr(args.fpr, 
+                            criterions, 
+                            model, 
+                            args.datast, 
+                            args.title, 
+                            attacks, 
+                            args.lowbd, 
+                            args.upbd, 
+                            args.real_dir, 
+                            adv_d, 
+                            noise_radius, 
+                            targeted_lr, 
+                            targeted_radius, 
+                            untargeted_lr, 
+                            untargeted_radius)
 else:
-    single_metric_fpr_tpr(args.fpr, criterions, model, args.datast, t, atks, args.lowbd, args.upbd, args.real_dir, adv_d, 
-                                args.noise_radius, args.targeted_lr, args.targeted_radius, args.untargeted_lr, args.untargeted_radius, opt=args.det_opt)
+    single_metric_fpr_tpr(args.fpr, 
+                          criterions, 
+                          model, 
+                          args.datast, 
+                          args.title, 
+                          attacks, 
+                          args.lowbd, 
+                          args.upbd, 
+                          args.real_dir, 
+                          adv_d, 
+                          noise_radius, 
+                          targeted_lr, 
+                          targeted_radius, 
+                          untargeted_lr, 
+                          untargeted_radius, 
+                          opt=args.det_opt)
 
 print('finish evaluation based on tuned thresholds')
