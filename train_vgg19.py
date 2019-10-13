@@ -87,7 +87,7 @@ parser.add_argument('--pretrained', dest='pretrained', action='store_true',
                     help='use pre-trained model')
 parser.add_argument('--cpu', dest='cpu', action='store_true',
                     help='use cpu')
-parser.add_argument('--save-dir', dest='save_dir',
+parser.add_argument('--save_dir', dest='save_dir',
                     help='The directory used to save the trained models',
                     default='~/vgg19model/', type=str)
 parser.add_argument('--real_dir', type=str, default='~/cifardata/')#this is the folder for real images
