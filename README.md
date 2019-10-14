@@ -11,9 +11,13 @@
 *: Equal Contribution
 
 ### Introduction
-This repo contains official code and models for the NeurIPS 2019 paper, A New Defense Against Adversarial Images: Turning a Weakness into a Strength.
+This repo contains official code and models for the NeurIPS 2019 paper, A New Defense Against Adversarial Images:
+Turning a Weakness into a Strength.
 
-We postulate that if an image has been tampered with adversarial perturbation, then surrouding adversarial directions either become harder to find with gradient methods or have substantially higher density than for natural images. Based on this, we develop a practical test for this signature characteristic to successfully detect both gray-box and white-box adversarial attacks.
+We postulate that if an image has been tampered with adversarial perturbation, then surrouding adversarial directions
+either become harder to find with gradient methods or have substantially higher density than for natural images.
+Based on this, we develop a practical test for this signature characteristic to successfully detect both gray-box and
+white-box adversarial attacks. Here are the experiment results on ImageNet against different attacks:
 
 <img align="center" src="exp.png" width="700px" />
 
@@ -23,12 +27,13 @@ We postulate that if an image has been tampered with adversarial perturbation, t
 * numpy
 
 ### Data
-- For CIFAR10 dataset, it is downloaded automatically by torchvision.datasets.CIFAR10() function in train_vgg19.py.
-- For ImageNet dataset, download the validation images to a folder `~/imagenetdata/`, then move them into labeled subfolders with
+- For CIFAR10 dataset, it is downloaded automatically by torchvision.datasets.CIFAR10 function in train_vgg19.py.
+- For ImageNet dataset, download the validation images to a folder `./imagenetdata/`, then move them into labeled subfolders with
 imagenet.sh.
 
 ### Usage
-To train a vgg19 model for CIFAR10, run:
+train_vgg19.py is adopted from [pytorch-vgg-cifar10](https://github.com/chengyangfu/pytorch-vgg-cifar10) with an modification of
+adding BatchNormalizations to the model. To train a vgg19 model for CIFAR10, run:
 ```
 $ python train_vgg19.py
 ```
