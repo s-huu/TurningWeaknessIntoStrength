@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
@@ -108,33 +109,21 @@ def l1_vals(model,
             n_radius):
     vals = np.zeros(0)
     if attack == "real":
-        if datast == 'cifar':
-            testset = torchvision.datasets.CIFAR10(root=real_dir, train=False, download=True, transform=torchvision.transforms.Compose([torchvision.transforms.ToTensor(), ]))
         for i in range(lowind, upind):
-            if datast == 'imagenet':
-                view_data = torch.load(real_dir + 'real_img/real_' + str(i) + '_img.pt')
-                view_data_label = torch.load(real_dir + 'real_label/real_' + str(i) + '_label.pt')
-                model.eval()
-                predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
-                if predicted_label != view_data_label:
-                    continue  # note that only load images that were classified correctly
-            elif datast == 'cifar':
-                view_data, view_data_label = testset[i]
-                view_data = view_data.unsqueeze(0).cuda()
-                view_data_label = view_data_label * torch.ones(1).cuda()
-                model.eval()
-                predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
-                if predicted_label != view_data_label:
-                    continue  # note that only load images that were classified correctly
-            else:
-                raise "Not Implemented"
+            view_data = torch.load(os.path.join(real_dir, str(i) + '_img.pt'))
+            view_data_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
+            model.eval()
+            predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
+            if predicted_label != view_data_label:
+                continue  # note that only load images that were classified correctly
+            
             val = l1_detection(model, view_data, datast, n_radius)
             vals = np.concatenate((vals, [val]))
     else:
         cout = upind - lowind
         for i in range(lowind, upind):
-            adv = torch.load(adv_dir + attack + '/' + datast + '_' + str(i) + title + '.pt')
-            real_label = torch.load(adv_dir + 'real_label/' + datast + '_' + str(i) + title + '_label.pt')
+            adv = torch.load(os.path.join(os.path.join(adv_dir, attack), str(i) + title + '.pt'))
+            real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
             predicted_label = model(transform(adv.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:
@@ -167,33 +156,21 @@ def targeted_vals(model,
                   t_radius):
     vals = np.zeros(0)
     if attack == "real":
-        if datast == 'cifar':
-            testset = torchvision.datasets.CIFAR10(root=real_dir, train=False, download=True, transform=torchvision.transforms.Compose([torchvision.transforms.ToTensor(), ]))
         for i in range(lowind, upind):
-            if datast == 'imagenet':
-                view_data = torch.load(real_dir + 'real_img/real_' + str(i) + '_img.pt')
-                view_data_label = torch.load(real_dir + 'real_label/real_' + str(i) + '_label.pt')
-                model.eval()
-                predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
-                if predicted_label != view_data_label:
-                    continue  # note that only load images that were classified correctly
-            elif datast == 'cifar':
-                view_data, view_data_label = testset[i]
-                view_data = view_data.unsqueeze(0).cuda()
-                view_data_label = view_data_label * torch.ones(1).cuda()
-                model.eval()
-                predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
-                if predicted_label != view_data_label:
-                    continue  # note that only load images that were classified correctly
-            else:
-                raise "Not Implemented"
+            view_data = torch.load(os.path.join(real_dir, str(i) + '_img.pt'))
+            view_data_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
+            model.eval()
+            predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
+            if predicted_label != view_data_label:
+                continue  # note that only load images that were classified correctly
+            
             val = targeted_detection(model, view_data, datast,targeted_lr, t_radius)
             vals = np.concatenate((vals, [val]))
     else:
         cout = upind - lowind
         for i in range(lowind, upind):
-            adv = torch.load(adv_dir + attack + '/' + datast + '_' + str(i) + title + '.pt')
-            real_label = torch.load(adv_dir + 'real_label/' + datast + '_' + str(i) + title + '_label.pt')
+            adv = torch.load(os.path.join(os.path.join(adv_dir, attack), str(i) + title + '.pt'))
+            real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
             predicted_label = model(transform(adv.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:
@@ -227,33 +204,21 @@ def untargeted_vals(model,
                     u_radius):
     vals = np.zeros(0)
     if attack == "real":
-        if datast == 'cifar':
-            testset = torchvision.datasets.CIFAR10(root=real_dir, train=False, download=True, transform=torchvision.transforms.Compose([torchvision.transforms.ToTensor(), ]))
         for i in range(lowind, upind):
-            if datast == 'imagenet':
-                view_data = torch.load(real_dir + 'real_img/real_' + str(i) + '_img.pt')
-                view_data_label = torch.load(real_dir + 'real_label/real_' + str(i) + '_label.pt')
-                model.eval()
-                predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
-                if predicted_label != view_data_label:
-                    continue  # note that only load images that were classified correctly
-            elif datast == 'cifar':
-                view_data, view_data_label = testset[i]
-                view_data = view_data.unsqueeze(0).cuda()
-                view_data_label = view_data_label * torch.ones(1).cuda()
-                model.eval()
-                predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
-                if predicted_label != view_data_label:
-                    continue  # note that only load images that were classified correctly
-            else:
-                raise "Not Implemented"
+            view_data = torch.load(os.path.join(real_dir, str(i) + '_img.pt'))
+            view_data_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
+            model.eval()
+            predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
+            if predicted_label != view_data_label:
+                continue  # note that only load images that were classified correctly
+            
             val = untargeted_detection(model, view_data, datast,untargeted_lr, u_radius)
             vals = np.concatenate((vals, [val]))
     else:
         cout = upind - lowind
         for i in range(lowind, upind):
-            adv = torch.load(adv_dir + attack + '/' + datast + '_' + str(i) + title + '.pt')
-            real_label = torch.load(adv_dir + 'real_label/' + datast + '_' + str(i) + title + '_label.pt')
+            adv = torch.load(os.path.join(os.path.join(adv_dir, attack), str(i) + title + '.pt'))
+            real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
             predicted_label = model(transform(adv.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:
