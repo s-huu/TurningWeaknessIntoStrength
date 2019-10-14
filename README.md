@@ -34,7 +34,21 @@ $ python train_vgg19.py
 ```
 To perform an attack, run:
 ```
-$ python attack.py
+$ python attack.py [-h] --real_dir REAL_DIR --adv_dir ADV_DIR --name NAME
+                   [--dataset DATASET] [--setting SETTING] [--allstep STEP]
+                   [--base BASE] [--lowbd LOWBD] [--upbd UPBD] [--radius RADIUS]
+optional arguments:
+  -h, --help            show this help message and exit
+  --real_dir REAL_DIR   directory to store images correctly classified
+  --adv_dir ADV_DIR     directory to store adversarial images
+  --name NAME           the name of the adversarial example
+  --dataset DATASET     cifar | imagenet
+  --setting SETTING     white | gray
+  --allstep STEP        number of steps to run an iterative attack
+  --base BASE           model: vgg for cifar and resnet/inception for imagenet
+  --lowbd LOWBD         index of the first adversarial example to load
+  --upbd UPBD           index of the last adversarial example to load
+  --radius RADIUS       adversarial radius
 ```
 To evaluate the detection method, run:
 ```
