@@ -15,7 +15,7 @@ This repo contains official code and models for the NeurIPS 2019 paper, A New De
 
 We postulate that if an image has been tampered with adversarial perturbation, then surrouding adversarial directions either become harder to find with gradient methods or have substantially higher density than for natural images. Based on this, we develop a practical test for this signature characteristic to successfully detect both gray-box and white-box adversarial attacks.
 
-<img align="center" src="exp.png" width="300px" />
+<img align="center" src="exp.png" width="900px" />
 
 ### Dependencies
 * Python 3
