@@ -323,7 +323,7 @@ elif args.dataset == 'cifar':
     targeted_radius = 0.5
     untargeted_radius = 0.5
     untargeted_lr = 1
-    testset = torchvision.datasets.CIFAR10(root=args.data_dir, train=False, download=True,
+    testset = torchvision.datasets.CIFAR10(root=data_dir, train=False, download=True,
                                            transform=torchvision.transforms.Compose(
                                                [torchvision.transforms.ToTensor(), ]))
 
