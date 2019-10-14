@@ -267,7 +267,7 @@ def CW(model,
 parser = argparse.ArgumentParser(description='PyTorch White Box Adversary Generation')
 parser.add_argument('--real_dir', type=str, required=True, help='directory to store images correctly classified')
 parser.add_argument('--adv_dir', type=str, required=True, help='directory to store adversarial images')
-parser.add_argument('--name', type=str, required=True, help='the name of the adversarial example')
+parser.add_argument('--name', type=str, default='_demo_',required=True, help='the name of the adversarial example')
 parser.add_argument('--dataset', type=str, default='imagenet', help='dataset, imagenet or cifar')
 parser.add_argument('--setting', type=str, default='white', help='attack, white or gray')
 parser.add_argument('--allstep', type=int, default=50, help='number of steps to run an iterative attack')
@@ -288,6 +288,8 @@ if args.dataset == 'imagenet':
     data_dir = './imagenetdata/'
     if not os.path.exists(adv_d):
         os.makedirs(adv_d)
+        os.makedirs(os.path.join(adv_d,'pgd'))
+        os.makedirs(os.path.join(adv_d,'cw'))
     if not os.path.exists(real_d):
         os.makedirs(real_d)
     noise_radius = 0.1
@@ -361,7 +363,7 @@ for i in range(args.lowbd, args.upbd):
                    targeted_radius = targeted_radius, 
                    untargeted_lr = untargeted_lr,
                    untargeted_radius = untargeted_radius),
-               adv_d + '/aug_pgd/' + args.dataset + '_' + str(numcout) + title + '.pt')
+               os.path.join(os.path.join(adv_d, 'pgd'), str(numcout) + title + '.pt'))
     torch.save(CW(model, 
                   view_data, 
                   dataset = args.dataset, 
@@ -373,6 +375,6 @@ for i in range(args.lowbd, args.upbd):
                   targeted_radius = targeted_radius, 
                   untargeted_lr = untargeted_lr,
                   untargeted_radius = untargeted_radius),
-               adv_d + '/cw/' + args.dataset + '_' + str(numcout) + title + '.pt')
+               os.path.join(os.path.join(adv_d, 'cw'), str(numcout) + title + '.pt'))
     numcout += 1
 print('Finish generating white box adversaries')
