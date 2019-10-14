@@ -1,5 +1,5 @@
 ## A New Defense Against Adversarial Images: Turning a Weakness into a Strength
-<img align="right" src="detect_fig.png" width="300px" />
+<img align="right" src="detect_fig.png" width="250px" />
 
 #### Authors:
 * [Tao Yu](http://www.cs.cornell.edu/~tyu/)*
@@ -15,7 +15,7 @@ This repo contains official code and models for the NeurIPS 2019 paper, A New De
 
 We postulate that if an image has been tampered with adversarial perturbation, then surrouding adversarial directions either become harder to find with gradient methods or have substantially higher density than for natural images. Based on this, we develop a practical test for this signature characteristic to successfully detect both gray-box and white-box adversarial attacks.
 
-A table about experimental results on cifar and imagenet.
+<img align="center" src="exp.png" width="300px" />
 
 ### Dependencies
 * Python 3
@@ -71,7 +71,7 @@ optional arguments:
 ### Citation
 If you use our code or wish to refer to our results, please use the following BibTex entry:
 ```
-@InProceedings{Yu_2019_NIPS,
+@InProceedings{Yu_2019_NeurIPS,
   author = {Yu, Tao and Hu, Shengyuan and Guo, Chuan and Chao, Weilun and Weinberger, Kilian},
   title = {A New Defense Against Adversarial Images: Turning a Weakness into a Strength},
   booktitle = {Proceedings of the 33rd Conference on Neural Information Processing Systems (NeurIPS 2019)},
