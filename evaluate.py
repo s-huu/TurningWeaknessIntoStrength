@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -141,8 +142,10 @@ else:
     raise Exception('Not supported dataset.')
 
 model.eval()
-adv_d = args.adv_dir + args.base + '/'
-attacks = ["aug_pgd", "cw"]
+
+real_d = os.path.join(args.real_dir,args.base)
+adv_d = os.path.join(args.adv_dir,args.base)
+attacks = ["pgd", "cw"]
 if args.det_opt == 'combined':
     combined_metric_fpr_tpr(args.fpr, 
                             criterions, 
@@ -152,7 +155,7 @@ if args.det_opt == 'combined':
                             attacks, 
                             args.lowbd, 
                             args.upbd, 
-                            args.real_dir, 
+                            real_d, 
                             adv_d, 
                             noise_radius, 
                             targeted_lr, 
@@ -168,7 +171,7 @@ else:
                           attacks, 
                           args.lowbd, 
                           args.upbd, 
-                          args.real_dir, 
+                          real_d, 
                           adv_d, 
                           noise_radius, 
                           targeted_lr, 
