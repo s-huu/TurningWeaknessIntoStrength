@@ -52,7 +52,20 @@ optional arguments:
 ```
 To evaluate the detection method, run:
 ```
-$ python evaluate.py 
+$ python evaluate.py [-h] --real_dir REAL_DIR --adv_dir ADV_DIR --title TITLE
+                     [--dataset DATASET] [--base BASE] [--lowbd LOWBD] 
+                     [--upbd UPBD] [--fpr FPR] [--det_opt OPT]
+optional arguments:
+  -h, --help            show this help message and exit
+  --real_dir REAL_DIR   directory to store images correctly classified
+  --adv_dir ADV_DIR     directory to store adversarial images
+  --title TITLE         name/title of your attack
+  --dataset DATASET     cifar | imagenet
+  --base BASE           model: vgg for cifar and resnet/inception for imagenet
+  --lowbd LOWBD         index of the first adversarial example to load
+  --upbd UPBD           index of the last adversarial example to load
+  --fpr FPR             false positive rate for detection
+  --det_opt OPT         combined | l1 | targeted | untargeted
 ```
 
 ### Citation
