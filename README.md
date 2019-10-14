@@ -3,7 +3,7 @@
 
 #### Authors:
 * [Tao Yu](http://www.cs.cornell.edu/~tyu/)*
-* Shengyuan Hu*
+* [Shengyuan Hu](https://s-huu.github.io)*
 * [Chuan Guo](https://sites.google.com/view/chuanguo)
 * [Weilun Chao](http://www-scf.usc.edu/~weilunc/)
 * [Kilian Q. Weinberger](http://kilian.cs.cornell.edu/index.html)
