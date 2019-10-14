@@ -28,11 +28,17 @@ A table about experimental results on cifar and imagenet.
 imagenet.sh.
 
 ### Usage
-Introduction of different files,
+To train a vgg19 model for CIFAR10, run:
 ```
-$ python train_vgg19.py # train vgg19 model on cifar
-$ python attack.py # attack to generate adversaries
-$ python evaluate.py # detect and evaluate
+$ python train_vgg19.py
+```
+To perform an attack, run:
+```
+$ python attack.py
+```
+To evaluate the detection method, run:
+```
+$ python evaluate.py 
 ```
 
 ### Citation
