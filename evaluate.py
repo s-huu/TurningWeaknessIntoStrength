@@ -13,7 +13,7 @@ from train_vgg19 import vgg19
 def single_metric_fpr_tpr(fpr, 
                           criterions, 
                           model, 
-                          datast, 
+                          dataset, 
                           title, 
                           attacks, 
                           lowind, 
@@ -27,15 +27,15 @@ def single_metric_fpr_tpr(fpr,
                           u_radius, 
                           opt='l1'):
     if opt == 'l1':
-        target = l1_vals(model, datast, title, "real", lowind, upind, real_dir, adv_dir, n_radius)
+        target = l1_vals(model, dataset, title, "real", lowind, upind, real_dir, adv_dir, n_radius)
         threshold = criterions[fpr][0]
         print('this is l1 norm for real images', target)
     elif opt == 'targeted':
-        target = targeted_vals(model, datast, title, "real", lowind, upind, real_dir, adv_dir, targeted_lr, t_radius)
+        target = targeted_vals(model, dataset, title, "real", lowind, upind, real_dir, adv_dir, targeted_lr, t_radius)
         threshold = criterions[fpr][1]
         print('this is step of targetd attack for real images', target)
     elif opt == 'untargeted':
-        target = untargeted_vals(model, datast, title, "real", lowind, upind, real_dir, adv_dir,untargeted_lr, u_radius)
+        target = untargeted_vals(model, dataset, title, "real", lowind, upind, real_dir, adv_dir,untargeted_lr, u_radius)
         threshold = criterions[fpr][2]
         print('this is step of untargetd attack for real images', target)
     else:
@@ -47,13 +47,13 @@ def single_metric_fpr_tpr(fpr,
 
     for i in range(len(attacks)):
         if opt == 'l1':
-            a_target = l1_vals(model, datast, title, attacks[i], lowind, upind, real_dir, adv_dir, n_radius)
+            a_target = l1_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir, n_radius)
             print('this is l1 norm for ',attacks[i], a_target)
         elif opt == 'targeted':
-            a_target = targeted_vals(model, datast, title, attacks[i], lowind, upind, real_dir, adv_dir,targeted_lr, t_radius)
+            a_target = targeted_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir,targeted_lr, t_radius)
             print('this is step of targetd attack for ',attacks[i], a_target)
         elif opt == 'untargeted':
-            a_target = untargeted_vals(model, datast, title, attacks[i], lowind, upind, real_dir, adv_dir, untargeted_lr, u_radius)
+            a_target = untargeted_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir, untargeted_lr, u_radius)
             print('this is step of untargetd attack for ',attacks[i], a_target)
         else:
             raise "Not implemented"
@@ -64,7 +64,7 @@ def single_metric_fpr_tpr(fpr,
 def combined_metric_fpr_tpr(fpr, 
                             criterions,
                             model, 
-                            datast, 
+                            dataset, 
                             title, 
                             attacks, 
                             lowind, 
@@ -76,17 +76,17 @@ def combined_metric_fpr_tpr(fpr,
                             t_radius, 
                             untargeted_lr,
                             u_radius):
-    target_1 = l1_vals(model, datast, title, "real", lowind, upind, real_dir, adv_dir, n_radius)
-    target_2 = targeted_vals(model, datast, title, "real", lowind, upind, real_dir, adv_dir, targeted_lr, t_radius)
-    target_3 = untargeted_vals(model, datast, title, "real", lowind, upind, real_dir, adv_dir, untargeted_lr, u_radius)
+    target_1 = l1_vals(model, dataset, title, "real", lowind, upind, real_dir, adv_dir, n_radius)
+    target_2 = targeted_vals(model, dataset, title, "real", lowind, upind, real_dir, adv_dir, targeted_lr, t_radius)
+    target_3 = untargeted_vals(model, dataset, title, "real", lowind, upind, real_dir, adv_dir, untargeted_lr, u_radius)
 
     fpr = len(target_1[np.logical_or(np.logical_or(target_1 > criterions[fpr][0], target_2 > criterions[fpr][1]), target_3 > criterions[fpr][2])]) * 1.0 / len(target_1)
     print("corresponding fpr of this threshold is ", fpr)
 
     for i in range(len(attacks)):
-        a_target_1 = l1_vals(model, datast, title, attacks[i], lowind, upind, real_dir, adv_dir, n_radius)
-        a_target_2 = targeted_vals(model, datast, title, attacks[i], lowind, upind, real_dir, adv_dir, targeted_lr, t_radius)
-        a_target_3 = untargeted_vals(model, datast, title, attacks[i], lowind, upind, real_dir, adv_dir, untargeted_lr, u_radius)
+        a_target_1 = l1_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir, n_radius)
+        a_target_2 = targeted_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir, targeted_lr, t_radius)
+        a_target_3 = untargeted_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir, untargeted_lr, u_radius)
         tpr = len(a_target_1[np.logical_or(np.logical_or(a_target_1 > criterions[fpr][0], a_target_2 > criterions[fpr][1]),a_target_3 > criterions[fpr][2])]) * 1.0 / len(a_target_1)
         print("corresponding tpr for " + attacks[i] + "of this threshold is ", tpr)
 
@@ -95,7 +95,7 @@ parser = argparse.ArgumentParser(description='PyTorch White Box Adversary Detect
 parser.add_argument('--real_dir', type=str, required=True, help='the folder for real images in ImageNet in .pt format')
 parser.add_argument('--adv_dir', type=str, required=True, help='the folder to store generate adversaries of ImageNet in .pt')
 parser.add_argument('--title', type=str, required=True, help='name/title of your attack')
-parser.add_argument('--datast', type=str, default='imagenet', help='dataset, imagenet or cifar')
+parser.add_argument('--dataset', type=str, default='imagenet', help='dataset, imagenet or cifar')
 parser.add_argument('--base', type=str, default="resnet", help='model, vgg for cifar and resnet/inceptiion for imagenet')
 parser.add_argument('--lowbd', type=int, default=0, help='index of the first adversarial example to load')
 parser.add_argument('--upbd', type=int, default=1000, help='index of the last adversarial example to load')
@@ -104,7 +104,7 @@ parser.add_argument('--det_opt', type=str, default='combined',help='l1,targeted,
 args = parser.parse_args()
 
 model = None
-if args.datast == 'imagenet':
+if args.dataset == 'imagenet':
     noise_radius = 0.1
     targeted_lr = 0.005
     targeted_radius = 0.03
@@ -122,7 +122,7 @@ if args.datast == 'imagenet':
     else:
         raise Exception('No such model predefined.')
     model = torch.nn.DataParallel(model).cuda()
-elif args.datast == 'cifar':#need to update parameters in detection like noise_radius, also update criterions
+elif args.dataset == 'cifar':#need to update parameters in detection like noise_radius, also update criterions
     noise_radius = 0.01
     targeted_lr = 0.0005
     targeted_radius = 0.5
@@ -150,7 +150,7 @@ if args.det_opt == 'combined':
     combined_metric_fpr_tpr(args.fpr, 
                             criterions, 
                             model, 
-                            args.datast, 
+                            args.dataset, 
                             args.title, 
                             attacks, 
                             args.lowbd, 
@@ -166,7 +166,7 @@ else:
     single_metric_fpr_tpr(args.fpr, 
                           criterions, 
                           model, 
-                          args.datast, 
+                          args.dataset, 
                           args.title, 
                           attacks, 
                           args.lowbd, 
