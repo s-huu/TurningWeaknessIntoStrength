@@ -269,12 +269,12 @@ parser.add_argument('--real_dir', type=str, required=True, help='directory to st
 parser.add_argument('--adv_dir', type=str, required=True, help='directory to store adversarial images')
 parser.add_argument('--name', type=str, required=True, help='the name of the adversarial example')
 parser.add_argument('--dataset', type=str, default='imagenet', help='dataset, imagenet or cifar')
-parser.add_argument('--base', type=str, default="resnet")
 parser.add_argument('--setting', type=str, default='white', help='attack, white or gray')
-parser.add_argument('--allstep', type=int, default=50)
-parser.add_argument('--lowbd', type=int, default=0)
-parser.add_argument('--upbd', type=int, default=1000)#how many adversaries will be generated
-parser.add_argument('--radius', type=float, default=0.1)#how many adversaries will be generated
+parser.add_argument('--allstep', type=int, default=50, help='number of steps to run an iterative attack')
+parser.add_argument('--base', type=str, default="resnet", help='model, vgg for cifar and resnet/inception for imagenet')
+parser.add_argument('--lowbd', type=int, default=0, help='index of the first adversarial example to load')
+parser.add_argument('--upbd', type=int, default=1000, help='index of the last adversarial example to load')
+parser.add_argument('--radius', type=float, default=0.1, help='adversarial radius')
 args = parser.parse_args()
 
 t_attack = L3Attack.apply
