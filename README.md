@@ -12,7 +12,7 @@
 
 ### Introduction
 This repo contains official code and models for the NeurIPS 2019 paper, [A New Defense Against Adversarial Images:
-Turning a Weakness into a Strength](https://github.com/s-huu/TurningWeaknessIntoStrength).
+Turning a Weakness into a Strength](https://arxiv.org/abs/1910.07629).
 
 We postulate that if an image has been tampered with adversarial perturbation, then surrouding adversarial directions
 either become harder to find with gradient methods or have substantially higher density than for natural images.
