@@ -3,14 +3,14 @@ import numpy as np
 
 
 """Normalize the data given the dataset. Only ImageNet and CIFAR-10 are supported"""
-def transform(img, datast='imagenet'):
+def transform(img, dataset='imagenet'):
     # Data
-    if datast == 'imagenet':
+    if dataset == 'imagenet':
         mean = torch.Tensor([0.485, 0.456, 0.406]).unsqueeze(1).expand_as(img[0, :, :, 0]).unsqueeze(2).expand_as(
             img[0]).unsqueeze(0).expand_as(img).cuda()
         std = torch.Tensor([0.229, 0.224, 0.225]).unsqueeze(1).expand_as(img[0, :, :, 0]).unsqueeze(2).expand_as(
             img[0]).unsqueeze(0).expand_as(img).cuda()
-    elif datast == 'cifar':
+    elif dataset == 'cifar':
         mean = torch.Tensor([0.485, 0.456, 0.406]).unsqueeze(1).expand_as(img[0, :, :, 0]).unsqueeze(2).expand_as(
             img[0]).unsqueeze(0).expand_as(img).cuda()
         std = torch.Tensor([0.229, 0.224, 0.225]).unsqueeze(1).expand_as(img[0, :, :, 0]).unsqueeze(2).expand_as(
@@ -20,11 +20,11 @@ def transform(img, datast='imagenet'):
     return (img - mean) / std
 
 
-"""Given [label] and [datast], return a random label different from [label]"""
-def random_label(label, datast='imagenet'):
-    if datast == 'imagenet':
+"""Given [label] and [dataset], return a random label different from [label]"""
+def random_label(label, dataset='imagenet'):
+    if dataset == 'imagenet':
         class_num = 1000
-    elif datast == 'cifar':
+    elif dataset == 'cifar':
         class_num = 10
     else:
         raise "dataset is not supported"
