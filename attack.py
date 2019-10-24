@@ -286,12 +286,10 @@ adv_d = os.path.join(args.adv_dir,args.base)
 
 if args.dataset == 'imagenet':
     data_dir = './imagenetdata/'
-    if not os.path.exists(adv_d):
-        os.makedirs(adv_d)
-        os.makedirs(os.path.join(adv_d,'pgd'))
-        os.makedirs(os.path.join(adv_d,'cw'))
-    if not os.path.exists(real_d):
-        os.makedirs(real_d)
+    os.makedirs(adv_d, exist_ok=True)
+    os.makedirs(os.path.join(adv_d,'pgd'), exist_ok=True)
+    os.makedirs(os.path.join(adv_d,'cw'), exist_ok=True)
+    os.makedirs(real_d, exist_ok=True)
     noise_radius = 0.1
     targeted_lr = 0.005
     targeted_radius = 0.03
@@ -314,10 +312,10 @@ if args.dataset == 'imagenet':
     model = torch.nn.DataParallel(model).cuda()
 elif args.dataset == 'cifar':
     data_dir = './cifardata/'
-    if not os.path.exists(adv_d):
-        os.makedirs(adv_d)
-    if not os.path.exists(real_d):
-        os.makedirs(real_d)
+    os.makedirs(adv_d, exist_ok=True)
+    os.makedirs(os.path.join(adv_d,'pgd'), exist_ok=True)
+    os.makedirs(os.path.join(adv_d,'cw'), exist_ok=True)
+    os.makedirs(real_d, exist_ok=True)
     noise_radius = 0.01
     targeted_lr = 0.0005
     targeted_radius = 0.5
