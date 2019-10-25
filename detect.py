@@ -12,16 +12,16 @@ noisy = Noisy.apply
 """ Return the value of l1 norm of [img] with noise radius [n_radius]"""
 def l1_detection(model, 
                  img, 
-                 datast, 
+                 dataset, 
                  n_radius):
-    return torch.norm(F.softmax(model(transform(img, datast=datast))) - F.softmax(
-        model(transform(noisy(img, n_radius), datast=datast))), 1).item()
+    return torch.norm(F.softmax(model(transform(img, dataest=dataset))) - F.softmax(
+        model(transform(noisy(img, n_radius), dataset=dataset))), 1).item()
 
 """ Return the number of steps to cross boundary using targeted attack on [img]. Iteration stops at 
     [cap] steps """
 def targeted_detection(model, 
                        img, 
-                       datast, 
+                       dataset, 
                        lr, 
                        t_radius, 
                        cap=200,
@@ -29,13 +29,13 @@ def targeted_detection(model,
                        use_margin=False):
     model.eval()
     x_var = torch.autograd.Variable(img.clone().cuda(), requires_grad=True)
-    true_label = model(transform(x_var.clone(), datast=datast)).data.max(1, keepdim=True)[1][0].item()
+    true_label = model(transform(x_var.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0].item()
     optimizer_s = optim.SGD([x_var], lr=lr)
-    target_l = torch.LongTensor([random_label(true_label, datast=datast)]).cuda()
+    target_l = torch.LongTensor([random_label(true_label, dataset=dataset)]).cuda()
     counter = 0
-    while model(transform(x_var.clone(), datast=datast)).data.max(1, keepdim=True)[1][0].item() == true_label:
+    while model(transform(x_var.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0].item() == true_label:
         optimizer_s.zero_grad()
-        output = model(transform(x_var, datast=datast))
+        output = model(transform(x_var, dataset=dataset))
         if use_margin:
             target_l = target_l[0].item()
             _, top2_1 = output.data.cpu().topk(2)
@@ -58,7 +58,7 @@ def targeted_detection(model,
     [cap] steps """
 def untargeted_detection(model, 
                          img, 
-                         datast, 
+                         dataset, 
                          lr, 
                          u_radius, 
                          cap=1000,
@@ -69,9 +69,9 @@ def untargeted_detection(model,
     true_label = model(transform(x_var.clone(), datast=datast)).data.max(1, keepdim=True)[1][0].item()
     optimizer_s = optim.SGD([x_var], lr=lr)
     counter = 0
-    while model(transform(x_var.clone(), datast=datast)).data.max(1, keepdim=True)[1][0].item() == true_label:
+    while model(transform(x_var.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0].item() == true_label:
         optimizer_s.zero_grad()
-        output = model(transform(x_var, datast=datast))
+        output = model(transform(x_var, dataset=dataset))
         if use_margin:
             _, top2_1 = output.data.cpu().topk(2)
             argmax11 = top2_1[0][0]
@@ -99,7 +99,7 @@ def untargeted_detection(model,
     [n_radius] specifies the noise radius
 """
 def l1_vals(model, 
-            datast, 
+            dataset, 
             title, 
             attack, 
             lowind, 
@@ -113,11 +113,11 @@ def l1_vals(model,
             view_data = torch.load(os.path.join(real_dir, str(i) + '_img.pt'))
             view_data_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
-            predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
+            predicted_label = model(transform(view_data.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
             if predicted_label != view_data_label:
                 continue  # note that only load images that were classified correctly
             
-            val = l1_detection(model, view_data, datast, n_radius)
+            val = l1_detection(model, view_data, dataset, n_radius)
             vals = np.concatenate((vals, [val]))
     else:
         cout = upind - lowind
@@ -125,11 +125,11 @@ def l1_vals(model,
             adv = torch.load(os.path.join(os.path.join(adv_dir, attack), str(i) + title + '.pt'))
             real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
-            predicted_label = model(transform(adv.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
+            predicted_label = model(transform(adv.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:
                 continue#only load successful adversary
                 cout -= 1#number of successful adversary minus 1
-            val = l1_detection(model, adv, datast, n_radius)
+            val = l1_detection(model, adv, dataset, n_radius)
             vals = np.concatenate((vals, [val]))
         print('this is number of success in l1 detection', cout)
     return vals
