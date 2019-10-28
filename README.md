@@ -27,8 +27,8 @@ white-box adversarial attacks. Here are the experiment results on ImageNet again
 * numpy
 
 ### Data
-- For CIFAR10 dataset, it is downloaded automatically by torchvision.datasets.CIFAR10 function in train_vgg19.py.
-- For ImageNet dataset, download the validation images to a folder `./imagenetdata/`, then move them into labeled subfolders with
+- For CIFAR10 dataset, it is downloaded automatically by `torchvision.datasets.CIFAR10` function in train_vgg19.py.
+- For ImageNet dataset, download [the validation images](http://www.image-net.org/challenges/LSVRC/2012/) to a folder `./imagenetdata/`, then move them into labeled subfolders with
 imagenet.sh.
 
 ### Usage
