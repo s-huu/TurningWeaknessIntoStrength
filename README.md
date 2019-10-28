@@ -76,7 +76,7 @@ optional arguments:
 ### Citation
 If you use our code or wish to refer to our results, please use the following BibTex entry:
 ```
-@InProceedings{Yu_2019_NeurIPS,
+@InProceedings{Yu_2019_NeurIPSweakness,
   author = {Yu, Tao and Hu, Shengyuan and Guo, Chuan and Chao, Weilun and Weinberger, Kilian},
   title = {A New Defense Against Adversarial Images: Turning a Weakness into a Strength},
   booktitle = {Proceedings of the 33rd Conference on Neural Information Processing Systems (NeurIPS 2019)},
