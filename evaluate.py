@@ -94,7 +94,7 @@ def combined_metric_fpr_tpr(fpr,
 parser = argparse.ArgumentParser(description='PyTorch White Box Adversary Detection')
 parser.add_argument('--real_dir', type=str, required=True, help='the folder for real images in ImageNet in .pt format')
 parser.add_argument('--adv_dir', type=str, required=True, help='the folder to store generate adversaries of ImageNet in .pt')
-parser.add_argument('--title', type=str, required=True, help='name/title of your attack')
+parser.add_argument('--title', type=str, required=True, help='title of your attack, should be name+step format')
 parser.add_argument('--dataset', type=str, default='imagenet', help='dataset, imagenet or cifar')
 parser.add_argument('--base', type=str, default="resnet", help='model, vgg for cifar and resnet/inceptiion for imagenet')
 parser.add_argument('--lowbd', type=int, default=0, help='index of the first adversarial example to load')

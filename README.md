@@ -64,7 +64,7 @@ optional arguments:
   -h, --help            show this help message and exit
   --real_dir REAL_DIR   directory to store images correctly classified
   --adv_dir ADV_DIR     directory to store adversarial images
-  --title TITLE         name/title of your attack
+  --title TITLE         title of your attack, should be name+step format
   --dataset DATASET     cifar | imagenet
   --base BASE           model: vgg for cifar and resnet/inception for imagenet
   --lowbd LOWBD         index of the first adversarial example to load
