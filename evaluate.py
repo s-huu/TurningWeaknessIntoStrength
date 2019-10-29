@@ -42,8 +42,8 @@ def single_metric_fpr_tpr(fpr,
         raise "Not implemented"
 
     # Note when opt is "targeted" or "untargeted, the measure is discrete. So we compute a corrected fpr"
-    fpr = len(target[target >= threshold]) * 1.0 / len(target)
-    print("corresponding fpr of this threshold is ", fpr)
+    fpr_accurate = len(target[target >= threshold]) * 1.0 / len(target)
+    print("corresponding accurate fpr of this threshold is ", fpr_accurate)
 
     for i in range(len(attacks)):
         if opt == 'l1':
@@ -80,8 +80,8 @@ def combined_metric_fpr_tpr(fpr,
     target_2 = targeted_vals(model, dataset, title, "real", lowind, upind, real_dir, adv_dir, targeted_lr, t_radius)
     target_3 = untargeted_vals(model, dataset, title, "real", lowind, upind, real_dir, adv_dir, untargeted_lr, u_radius)
 
-    fpr = len(target_1[np.logical_or(np.logical_or(target_1 > criterions[fpr][0], target_2 > criterions[fpr][1]), target_3 > criterions[fpr][2])]) * 1.0 / len(target_1)
-    print("corresponding fpr of this threshold is ", fpr)
+    fpr_accurate = len(target_1[np.logical_or(np.logical_or(target_1 > criterions[fpr][0], target_2 > criterions[fpr][1]), target_3 > criterions[fpr][2])]) * 1.0 / len(target_1)
+    print("corresponding accurate fpr of this threshold is ", fpr_accurate)
 
     for i in range(len(attacks)):
         a_target_1 = l1_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir, n_radius)
