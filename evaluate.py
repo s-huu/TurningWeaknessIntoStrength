@@ -90,7 +90,55 @@ def combined_metric_fpr_tpr(fpr,
         tpr = len(a_target_1[np.logical_or(np.logical_or(a_target_1 > criterions[fpr][0], a_target_2 > criterions[fpr][1]),a_target_3 > criterions[fpr][2])]) * 1.0 / len(a_target_1)
         print("corresponding tpr for " + attacks[i] + "of this threshold is ", tpr)
 
+"""Find a set of parameter and corresponding tpr given [target_fpr]"""
+def tune_criterion_thresholds(model,
+                              dataset,
+                              title,
+                              attacks,
+                              lowind,
+                              upind,
+                              real_dir,
+                              adv_dir,
+                              n_radius,
+                              targeted_lr,
+                              t_radius,
+                              untargeted_lr,
+                              u_radius,
+                              target_fpr):
+    target_1 = l1_vals(model, dataset, title, "real", lowind, upind, real_dir, adv_dir, n_radius)
+    target_2 = targeted_vals(model, dataset, title, "real", lowind, upind, real_dir, adv_dir, targeted_lr, t_radius)
+    target_3 = untargeted_vals(model, dataset, title, "real", lowind, upind, real_dir, adv_dir, untargeted_lr, u_radius)
+    p_1 = target_1.copy()
+    p_2 = target_2.copy()
+    p_3 = target_3.copy()
+    p_1.sort()
+    p_2.sort()
+    p_3.sort()
+    fpr = np.zeros(len(p_1)*len(p_2)*len(p_3)+1)
+    for ix_1 in range(0,len(p_1)):
+        for ix_2 in range(0,len(p_2)):
+            for ix_3 in range(0,len(p_3)):
+                fpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3] = len(target_1[np.logical_or(np.logical_or(target_1>p_1[ix_1],target_2>p_2[ix_2])],target_3>p_3[ix_3])])*1.0/len(target_1)
+    fpr[-1] = len(target_1[np.logical_or(np.logical_or(target_1>=p_1[-1],target_2>=p_2[-1])],target_3>=p_3[-1])])*1.0/len(target_1)
+    plt.figure(figsize=(8, 8))
+    for i in range(len(attacks)):
+        tprs = []
+        suitable_pairs = []
+        a_target_1 = l1_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir, n_radius)[::-1]
+        a_target_2 = targeted_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir, targeted_lr, t_radius)[::-1]
+        a_target_3 = untargeted_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir, untargeted_lr, u_radius)[::-1]
+        tpr = np.zeros(len(p_1)*len(p_2)+1)
+        for ix_1 in range(0,len(p_1)):
+            for ix_2 in range(0,len(p_2)):
+                for ix_3 in range(0,len(p_3)):
+                    tpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3] = len(a_target_1[np.logical_or(np.logical_or(a_target_1>p_1[ix_1],a_target_2>p_2[ix_2])],a_target_3>p_3[ix_3])])*1.0/len(a_target_1)
+                    if fpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3] <= target_fpr and fpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3] > target_fpr-0.01:
+                        suitable_pairs.append((p_1[ix_1],p_2[ix_2],p_3[ix_3]))
+                        tprs.append(tpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3])
 
+        tpr[-1] = len(a_target_1[np.logical_or(np.logical_or(a_target_1>=p_1[-1],a_target_2>=p_2[-1])],a_target_3>=p_3[-1])])*1.0/len(a_target_1)
+        return suitable_pairs,tprs
+      
 parser = argparse.ArgumentParser(description='PyTorch White Box Adversary Detection')
 parser.add_argument('--real_dir', type=str, required=True, help='the folder for real images in ImageNet in .pt format')
 parser.add_argument('--adv_dir', type=str, required=True, help='the folder to store generate adversaries of ImageNet in .pt')
