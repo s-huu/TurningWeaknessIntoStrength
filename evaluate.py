@@ -105,29 +105,29 @@ args = parser.parse_args()
 
 model = None
 if args.dataset == 'imagenet':
-    noise_radius = 0.1
-    targeted_lr = 0.005
-    targeted_radius = 0.03
-    untargeted_radius = 0.03
+    noise_radius = 0.1 #specifies the noise radius in l1 norm detection, used in C1 to measure robustness.
+    targeted_lr = 0.005 #specifies the learning rate for targeted attack detection criterion, used in C2t
+    targeted_radius = 0.03 #specifies the radius of targeted attack detection criterion, used in C2t
+    untargeted_radius = 0.03 #specifies the radius of untargeted attack detection criterion, used in C2u
     if args.base == 'resnet':
         model = models.resnet101(pretrained=True)
         """Criterions on ResNet-101"""
         criterions = {0.1: (1.90,35,1000), 0.2: (1.77, 22, 1000)}
-        untargeted_lr = 0.1
+        untargeted_lr = 0.1 #specifies the learning rate for untargeted attack detection criterion, used in C2u
     elif args.base == 'inception':
         model = models.inception_v3(pretrained=True, transform_input=False)
         """Criterions on Inception"""
         criterions = {0.1: (1.95, 57, 1000), 0.2: (1.83, 26, 1000)}
-        untargeted_lr = 3
+        untargeted_lr = 3 #specifies the learning rate for untargeted attack detection criterion, used in C2u
     else:
         raise Exception('No such model predefined.')
     model = torch.nn.DataParallel(model).cuda()
 elif args.dataset == 'cifar':#need to update parameters in detection like noise_radius, also update criterions
-    noise_radius = 0.01
-    targeted_lr = 0.0005
-    targeted_radius = 0.5
-    untargeted_radius = 0.5
-    untargeted_lr = 1
+    noise_radius = 0.01 #specifies the noise radius in l1 norm detection, used in C1 to measure robustness.
+    targeted_lr = 0.0005 #specifies the learning rate for targeted attack detection criterion, used in C2t
+    targeted_radius = 0.5 #specifies the radius of targeted attack detection criterion, used in C2t
+    untargeted_radius = 0.5 #specifies the radius of untargeted attack detection criterion, used in C2u
+    untargeted_lr = 1 #specifies the learning rate for untargeted attack detection criterion, used in C2u
     if args.base == "vgg":
         model = vgg19()
         model.features = torch.nn.DataParallel(model.features)

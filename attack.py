@@ -290,10 +290,10 @@ if args.dataset == 'imagenet':
     os.makedirs(os.path.join(adv_d,'pgd'), exist_ok=True)
     os.makedirs(os.path.join(adv_d,'cw'), exist_ok=True)
     os.makedirs(real_d, exist_ok=True)
-    noise_radius = 0.1
-    targeted_lr = 0.005
-    targeted_radius = 0.03
-    untargeted_radius = 0.03
+    noise_radius = 0.1 #specifies the noise radius in l1 norm detection, used in C1 to measure robustness.
+    targeted_lr = 0.005 #specifies the learning rate for targeted attack detection criterion, used in C2t
+    targeted_radius = 0.03 #specifies the radius of targeted attack detection criterion, used in C2t
+    untargeted_radius = 0.03 #specifies the radius of untargeted attack detection criterion, used in C2u
     #### use ImageFolder to load images, need to map label correct with target_transform
     testset = torchvision.datasets.ImageFolder(root=data_dir,
         transform=torchvision.transforms.Compose([
@@ -303,10 +303,10 @@ if args.dataset == 'imagenet':
                                                )
     if args.base == 'resnet':
         model = models.resnet101(pretrained=True)
-        untargeted_lr = 0.1
+        untargeted_lr = 0.1 #specifies the learning rate for untargeted attack detection criterion, used in C2u
     elif args.base == 'inception':
         model = models.inception_v3(pretrained=True, transform_input=False)
-        untargeted_lr = 3
+        untargeted_lr = 3 #specifies the learning rate for untargeted attack detection criterion, used in C2u
     else:
         raise Exception('No such model predefined.')
     model = torch.nn.DataParallel(model).cuda()
@@ -316,11 +316,11 @@ elif args.dataset == 'cifar':
     os.makedirs(os.path.join(adv_d,'pgd'), exist_ok=True)
     os.makedirs(os.path.join(adv_d,'cw'), exist_ok=True)
     os.makedirs(real_d, exist_ok=True)
-    noise_radius = 0.01
-    targeted_lr = 0.0005
-    targeted_radius = 0.5
-    untargeted_radius = 0.5
-    untargeted_lr = 1
+    noise_radius = 0.01 #specifies the noise radius in l1 norm detection, used in C1 to measure robustness.
+    targeted_lr = 0.0005 #specifies the learning rate for targeted attack detection criterion, used in C2t
+    targeted_radius = 0.5 #specifies the radius of targeted attack detection criterion, used in C2t
+    untargeted_radius = 0.5 #specifies the radius of untargeted attack detection criterion, used in C2u
+    untargeted_lr = 1 #specifies the learning rate for untargeted attack detection criterion, used in C2u
     testset = torchvision.datasets.CIFAR10(root=data_dir, train=False, download=True,
                                            transform=torchvision.transforms.Compose(
                                                [torchvision.transforms.ToTensor(), ]))
