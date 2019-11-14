@@ -90,7 +90,9 @@ def combined_metric_fpr_tpr(fpr,
         tpr = len(a_target_1[np.logical_or(np.logical_or(a_target_1 > criterions[fpr][0], a_target_2 > criterions[fpr][1]),a_target_3 > criterions[fpr][2])]) * 1.0 / len(a_target_1)
         print("corresponding tpr for " + attacks[i] + "of this threshold is ", tpr)
 
-"""Find a set of parameter and corresponding tpr given [target_fpr]"""
+"""Find a set of parameter and corresponding tpr given [target_fpr], you will need to pick a reasonable one, this is 
+time consuming, since we need to sort an n^3 number list. What's more, this tuning of three thresholds together is 
+different from tune three thresholds individualy, which may leads to same tpr with higher tpr."""
 def tune_criterion_thresholds(model,
                               dataset,
                               title,
@@ -161,12 +163,16 @@ if args.dataset == 'imagenet':
     if args.base == 'resnet':
         model = models.resnet101(pretrained=True)
         """Criterions on ResNet-101"""
-        criterions = {0.1: (1.90,35,1000), 0.2: (1.77, 22, 1000)}
+        untargeted_step_threshold = 10000 # C2u threshold, the untargeted attack is most time consuming, you may set this to 1000 or neglect
+        ## this detection if no untargeted attack adversary is considered, see our paper for more details.
+        criterions = {0.1: (1.90,35,untargeted_step_threshold), 0.2: (1.77, 22, untargeted_step_threshold)}
         untargeted_lr = 0.1 #specifies the learning rate for untargeted attack detection criterion, used in C2u
     elif args.base == 'inception':
         model = models.inception_v3(pretrained=True, transform_input=False)
         """Criterions on Inception"""
-        criterions = {0.1: (1.95, 57, 1000), 0.2: (1.83, 26, 1000)}
+        untargeted_step_threshold = 10000 # C2u threshold, the untargeted attack is most time consuming, you may set this to 1000 or neglect
+        ## this detection if no untargeted attack adversary is considered, see our paper for more details.
+        criterions = {0.1: (1.95, 57, untargeted_step_threshold), 0.2: (1.83, 26, untargeted_step_threshold)}
         untargeted_lr = 3 #specifies the learning rate for untargeted attack detection criterion, used in C2u
     else:
         raise Exception('No such model predefined.')
@@ -183,7 +189,9 @@ elif args.dataset == 'cifar':#need to update parameters in detection like noise_
         model.cuda()
         checkpoint = torch.load(args.save_dir + '/model_best.pth.tar')#save directory for vgg19 model
         """Criterions on vgg19"""
-        criterions = {0.1: (0.0006, 119, 1000), 0.2: (3.03e-05, 89, 1000)}
+        untargeted_step_threshold = 10000 # C2u threshold, the untargeted attack is most time consuming, you may set this to 1000 or neglect
+        ## this detection if no untargeted attack adversary is considered, see our paper for more details.
+        criterions = {0.1: (0.009, 119, untargeted_step_threshold), 0.2: (0.0006, 89, untargeted_step_threshold)}
     else:
         raise Exception('No such model predefined.')
     model.load_state_dict(checkpoint['state_dict'])
