@@ -14,7 +14,7 @@ def l1_detection(model,
                  img, 
                  dataset, 
                  n_radius):
-    return torch.norm(F.softmax(model(transform(img, dataest=dataset))) - F.softmax(
+    return torch.norm(F.softmax(model(transform(img, dataset=dataset))) - F.softmax(
         model(transform(noisy(img, n_radius), dataset=dataset))), 1).item()
 
 """ Return the number of steps to cross boundary using targeted attack on [img]. Iteration stops at 
@@ -110,20 +110,24 @@ def l1_vals(model,
     vals = np.zeros(0)
     if attack == "real":
         for i in range(lowind, upind):
-            view_data = torch.load(os.path.join(real_dir, str(i) + '_img.pt'))
-            view_data_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
+            image_dir = os.path.join(real_dir, str(i) + '_img.pt')
+            if os.path.exists(image_dir):
+                view_data = torch.load(image_dir)
+                view_data_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
-            predicted_label = model(transform(view_data.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
-            if predicted_label != view_data_label:
-                continue  # note that only load images that were classified correctly
-            
+#             #if you are using own data, uncomment following lines to make sure only detect images which are correctly classified
+#             predicted_label = model(transform(view_data.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
+#             if predicted_label != view_data_label:
+#                 continue  # note that only load images that were classified correctly
             val = l1_detection(model, view_data, dataset, n_radius)
             vals = np.concatenate((vals, [val]))
     else:
         cout = upind - lowind
         for i in range(lowind, upind):
-            adv = torch.load(os.path.join(os.path.join(adv_dir, attack), str(i) + title + '.pt'))
-            real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
+            image_dir = os.path.join(os.path.join(adv_dir, attack), str(i) + title + '.pt')
+            if os.path.exists(image_dir):
+                adv = torch.load(image_dir)
+                real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
             predicted_label = model(transform(adv.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:
@@ -157,20 +161,25 @@ def targeted_vals(model,
     vals = np.zeros(0)
     if attack == "real":
         for i in range(lowind, upind):
-            view_data = torch.load(os.path.join(real_dir, str(i) + '_img.pt'))
-            view_data_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
+            image_dir = os.path.join(real_dir, str(i) + '_img.pt')
+            if os.path.exists(image_dir):
+                view_data = torch.load(image_dir)
+                view_data_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
-            predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
-            if predicted_label != view_data_label:
-                continue  # note that only load images that were classified correctly
+#             #if you are using own data, uncomment following lines to make sure only detect images which are correctly classified
+#             predicted_label = model(transform(view_data.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
+#             if predicted_label != view_data_label:
+#                 continue  # note that only load images that were classified correctly
             
             val = targeted_detection(model, view_data, datast,targeted_lr, t_radius)
             vals = np.concatenate((vals, [val]))
     else:
         cout = upind - lowind
         for i in range(lowind, upind):
-            adv = torch.load(os.path.join(os.path.join(adv_dir, attack), str(i) + title + '.pt'))
-            real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
+            image_dir = os.path.join(os.path.join(adv_dir, attack), str(i) + title + '.pt')
+            if os.path.exists(image_dir):
+                adv = torch.load(image_dir)
+                real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
             predicted_label = model(transform(adv.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:
@@ -205,20 +214,25 @@ def untargeted_vals(model,
     vals = np.zeros(0)
     if attack == "real":
         for i in range(lowind, upind):
-            view_data = torch.load(os.path.join(real_dir, str(i) + '_img.pt'))
-            view_data_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
+            image_dir = os.path.join(real_dir, str(i) + '_img.pt')
+            if os.path.exists(image_dir):
+                view_data = torch.load(image_dir)
+                view_data_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
-            predicted_label = model(transform(view_data.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
-            if predicted_label != view_data_label:
-                continue  # note that only load images that were classified correctly
+#             #if you are using own data, uncomment following lines to make sure only detect images which are correctly classified
+#             predicted_label = model(transform(view_data.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
+#             if predicted_label != view_data_label:
+#                 continue  # note that only load images that were classified correctly
             
             val = untargeted_detection(model, view_data, datast,untargeted_lr, u_radius)
             vals = np.concatenate((vals, [val]))
     else:
         cout = upind - lowind
         for i in range(lowind, upind):
-            adv = torch.load(os.path.join(os.path.join(adv_dir, attack), str(i) + title + '.pt'))
-            real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
+            image_dir = os.path.join(os.path.join(adv_dir, attack), str(i) + title + '.pt')
+            if os.path.exists(image_dir):
+                adv = torch.load(image_dir)
+                real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
             predicted_label = model(transform(adv.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:

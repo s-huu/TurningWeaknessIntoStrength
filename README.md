@@ -32,8 +32,7 @@ white-box adversarial attacks. Here are the experiment results on ImageNet again
 imagenet.sh.
 
 ### Usage
-train_vgg19.py is adopted from [pytorch-vgg-cifar10](https://github.com/chengyangfu/pytorch-vgg-cifar10) with an modification of
-adding BatchNormalizations to the model. To train a vgg19 model for CIFAR10, run:
+train_vgg19.py is adopted from [pytorch-vgg-cifar10](https://github.com/chengyangfu/pytorch-vgg-cifar10). To train a vgg19 model for CIFAR10, run:
 ```
 $ python train_vgg19.py
 ```

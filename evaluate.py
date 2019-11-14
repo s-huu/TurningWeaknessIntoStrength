@@ -42,7 +42,7 @@ def single_metric_fpr_tpr(fpr,
         raise "Not implemented"
 
     # Note when opt is "targeted" or "untargeted, the measure is discrete. So we compute a corrected fpr"
-    fpr_accurate = len(target[target >= threshold]) * 1.0 / len(target)
+    fpr_accurate = len(target[target > threshold]) * 1.0 / len(target)
     print("corresponding accurate fpr of this threshold is ", fpr_accurate)
 
     for i in range(len(attacks)):
@@ -57,7 +57,7 @@ def single_metric_fpr_tpr(fpr,
             print('this is step of untargetd attack for ',attacks[i], a_target)
         else:
             raise "Not implemented"
-        tpr = len(a_target[a_target >= threshold]) * 1.0 / len(a_target)
+        tpr = len(a_target[a_target > threshold]) * 1.0 / len(a_target)
         print("corresponding tpr for " + attacks[i] + "of this threshold is ", tpr)
 
 """ Evaluate the tpr given [fpr] using the combined criteria"""
@@ -118,8 +118,8 @@ def tune_criterion_thresholds(model,
     for ix_1 in range(0,len(p_1)):
         for ix_2 in range(0,len(p_2)):
             for ix_3 in range(0,len(p_3)):
-                fpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3] = len(target_1[np.logical_or(np.logical_or(target_1>p_1[ix_1],target_2>p_2[ix_2])],target_3>p_3[ix_3])])*1.0/len(target_1)
-    fpr[-1] = len(target_1[np.logical_or(np.logical_or(target_1>=p_1[-1],target_2>=p_2[-1])],target_3>=p_3[-1])])*1.0/len(target_1)
+                fpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3] = len(target_1[np.logical_or(np.logical_or(target_1>p_1[ix_1],target_2>p_2[ix_2]),target_3>p_3[ix_3])])*1.0/len(target_1)
+    fpr[-1] = len(target_1[np.logical_or(np.logical_or(target_1>=p_1[-1],target_2>=p_2[-1]),target_3>=p_3[-1])])*1.0/len(target_1)
     plt.figure(figsize=(8, 8))
     for i in range(len(attacks)):
         tprs = []
@@ -131,12 +131,12 @@ def tune_criterion_thresholds(model,
         for ix_1 in range(0,len(p_1)):
             for ix_2 in range(0,len(p_2)):
                 for ix_3 in range(0,len(p_3)):
-                    tpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3] = len(a_target_1[np.logical_or(np.logical_or(a_target_1>p_1[ix_1],a_target_2>p_2[ix_2])],a_target_3>p_3[ix_3])])*1.0/len(a_target_1)
+                    tpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3] = len(a_target_1[np.logical_or(np.logical_or(a_target_1>p_1[ix_1],a_target_2>p_2[ix_2]),a_target_3>p_3[ix_3])])*1.0/len(a_target_1)
                     if fpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3] <= target_fpr and fpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3] > target_fpr-0.01:
                         suitable_pairs.append((p_1[ix_1],p_2[ix_2],p_3[ix_3]))
                         tprs.append(tpr[len(p_2)*len(p_3)*ix_1+len(p_3)*ix_2+ix_3])
 
-        tpr[-1] = len(a_target_1[np.logical_or(np.logical_or(a_target_1>=p_1[-1],a_target_2>=p_2[-1])],a_target_3>=p_3[-1])])*1.0/len(a_target_1)
+        tpr[-1] = len(a_target_1[np.logical_or(np.logical_or(a_target_1>=p_1[-1],a_target_2>=p_2[-1]),a_target_3>=p_3[-1])])*1.0/len(a_target_1)
         return suitable_pairs,tprs
       
 parser = argparse.ArgumentParser(description='PyTorch White Box Adversary Detection')
@@ -144,7 +144,8 @@ parser.add_argument('--real_dir', type=str, required=True, help='the folder for 
 parser.add_argument('--adv_dir', type=str, required=True, help='the folder to store generate adversaries of ImageNet in .pt')
 parser.add_argument('--title', type=str, required=True, help='title of your attack, should be name+step format')
 parser.add_argument('--dataset', type=str, default='imagenet', help='dataset, imagenet or cifar')
-parser.add_argument('--base', type=str, default="resnet", help='model, vgg for cifar and resnet/inceptiion for imagenet')
+parser.add_argument('--base', type=str, default="resnet", help='model, vgg for cifar and resnet/inception for imagenet')
+parser.add_argument('--save_dir', dest='save_dir',help='The directory where the pretrained vgg19 model is saved',default='./vgg19model/', type=str)
 parser.add_argument('--lowbd', type=int, default=0, help='index of the first adversarial example to load')
 parser.add_argument('--upbd', type=int, default=1000, help='index of the last adversarial example to load')
 parser.add_argument('--fpr', type=float, default=0.1, help='false positive rate for detection')
@@ -180,8 +181,8 @@ elif args.dataset == 'cifar':#need to update parameters in detection like noise_
         model = vgg19()
         model.features = torch.nn.DataParallel(model.features)
         model.cuda()
-        checkpoint = torch.load(save_dir + '/model_best.pth.tar')#save directory for vgg19 model
-        """Criterions on Inception"""
+        checkpoint = torch.load(args.save_dir + '/model_best.pth.tar')#save directory for vgg19 model
+        """Criterions on vgg19"""
         criterions = {0.1: (0.0006, 119, 1000), 0.2: (3.03e-05, 89, 1000)}
     else:
         raise Exception('No such model predefined.')
