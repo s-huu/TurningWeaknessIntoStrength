@@ -66,7 +66,7 @@ def untargeted_detection(model,
                          use_margin=False):
     model.eval()
     x_var = torch.autograd.Variable(img.clone().cuda(), requires_grad=True)
-    true_label = model(transform(x_var.clone(), datast=datast)).data.max(1, keepdim=True)[1][0].item()
+    true_label = model(transform(x_var.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0].item()
     optimizer_s = optim.SGD([x_var], lr=lr)
     counter = 0
     while model(transform(x_var.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0].item() == true_label:
@@ -149,7 +149,7 @@ def l1_vals(model,
     [t_radius] specifies the radius of targeted attack detection criterion.
 """
 def targeted_vals(model, 
-                  datast, 
+                  dataset,
                   title, 
                   attack, 
                   lowind, 
@@ -171,7 +171,7 @@ def targeted_vals(model,
 #             if predicted_label != view_data_label:
 #                 continue  # note that only load images that were classified correctly
             
-            val = targeted_detection(model, view_data, datast,targeted_lr, t_radius)
+            val = targeted_detection(model, view_data, dataset,targeted_lr, t_radius)
             vals = np.concatenate((vals, [val]))
     else:
         cout = upind - lowind
@@ -181,11 +181,11 @@ def targeted_vals(model,
                 adv = torch.load(image_dir)
                 real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
-            predicted_label = model(transform(adv.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
+            predicted_label = model(transform(adv.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:
                 continue#only load successful adversary
                 cout -= 1#number of successful adversary minus 1
-            val = targeted_detection(model, adv, datast, targeted_lr, t_radius)
+            val = targeted_detection(model, adv, dataset, targeted_lr, t_radius)
             vals = np.concatenate((vals, [val]))
         print('this is number of success in targeted detection', cout)
     return vals
@@ -202,7 +202,7 @@ def targeted_vals(model,
     [u_radius] specifies the radius of untargeted attack detection criterion.
 """
 def untargeted_vals(model, 
-                    datast, 
+                    dataset,
                     title, 
                     attack, 
                     lowind, 
@@ -224,7 +224,7 @@ def untargeted_vals(model,
 #             if predicted_label != view_data_label:
 #                 continue  # note that only load images that were classified correctly
             
-            val = untargeted_detection(model, view_data, datast,untargeted_lr, u_radius)
+            val = untargeted_detection(model, view_data, dataset,untargeted_lr, u_radius)
             vals = np.concatenate((vals, [val]))
     else:
         cout = upind - lowind
@@ -234,11 +234,11 @@ def untargeted_vals(model,
                 adv = torch.load(image_dir)
                 real_label = torch.load(os.path.join(real_dir, str(i) + '_label.pt'))
             model.eval()
-            predicted_label = model(transform(adv.clone(), datast=datast)).data.max(1, keepdim=True)[1][0]
+            predicted_label = model(transform(adv.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:
                 continue#only load successful adversary
                 cout -= 1#number of successful adversary minus 1
-            val = untargeted_detection(model, adv, datast,untargeted_lr, u_radius)
+            val = untargeted_detection(model, adv, dataset,untargeted_lr, u_radius)
             vals = np.concatenate((vals, [val]))
         print('this is number of success in untargeted detection', cout)
     return vals
