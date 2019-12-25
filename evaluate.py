@@ -43,7 +43,7 @@ def single_metric_fpr_tpr(fpr,
 
     # Note when opt is "targeted" or "untargeted, the measure is discrete. So we compute a corrected fpr"
     fpr_accurate = len(target[target > threshold]) * 1.0 / len(target)
-    print("corresponding accurate fpr of this threshold is ", fpr_accurate)
+    print("corresponding accurate fpr of this threshold is", fpr_accurate)
 
     for i in range(len(attacks)):
         if opt == 'l1':
@@ -58,7 +58,7 @@ def single_metric_fpr_tpr(fpr,
         else:
             raise "Not implemented"
         tpr = len(a_target[a_target > threshold]) * 1.0 / len(a_target)
-        print("corresponding tpr for " + attacks[i] + "of this threshold is ", tpr)
+        print("corresponding tpr for " + attacks[i] + " of this threshold is", tpr)
 
 """ Evaluate the tpr given [fpr] using the combined criteria"""
 def combined_metric_fpr_tpr(fpr, 
@@ -88,7 +88,7 @@ def combined_metric_fpr_tpr(fpr,
         a_target_2 = targeted_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir, targeted_lr, t_radius)
         a_target_3 = untargeted_vals(model, dataset, title, attacks[i], lowind, upind, real_dir, adv_dir, untargeted_lr, u_radius)
         tpr = len(a_target_1[np.logical_or(np.logical_or(a_target_1 > criterions[fpr][0], a_target_2 > criterions[fpr][1]),a_target_3 > criterions[fpr][2])]) * 1.0 / len(a_target_1)
-        print("corresponding tpr for " + attacks[i] + "of this threshold is ", tpr)
+        print("corresponding tpr for " + attacks[i] + " of this threshold is", tpr)
 
 """Find a set of parameter and corresponding tpr given [target_fpr], you will need to pick a reasonable one, this is 
 time consuming, since we need to sort an n^3 number list. What's more, this tuning of three thresholds together is 
