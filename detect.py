@@ -131,8 +131,8 @@ def l1_vals(model,
             model.eval()
             predicted_label = model(transform(adv.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:
-                continue#only load successful adversary
-                cout -= 1#number of successful adversary minus 1
+                cout -= 1 #number of successful adversary minus 1
+                continue #only load successful adversary
             val = l1_detection(model, adv, dataset, n_radius)
             vals = np.concatenate((vals, [val]))
         print('this is number of success in l1 detection', cout)
@@ -182,8 +182,8 @@ def targeted_vals(model,
             model.eval()
             predicted_label = model(transform(adv.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:
-                continue#only load successful adversary
-                cout -= 1#number of successful adversary minus 1
+                cout -= 1 #number of successful adversary minus 1
+                continue #only load successful adversary
             val = targeted_detection(model, adv, dataset, targeted_lr, t_radius)
             vals = np.concatenate((vals, [val]))
         print('this is number of success in targeted detection', cout)
@@ -234,8 +234,8 @@ def untargeted_vals(model,
             model.eval()
             predicted_label = model(transform(adv.clone(), dataset=dataset)).data.max(1, keepdim=True)[1][0]
             if real_label == predicted_label:
-                continue#only load successful adversary
-                cout -= 1#number of successful adversary minus 1
+                cout -= 1 #number of successful adversary minus 1
+                continue #only load successful adversary
             val = untargeted_detection(model, adv, dataset,untargeted_lr, u_radius)
             vals = np.concatenate((vals, [val]))
         print('this is number of success in untargeted detection', cout)
